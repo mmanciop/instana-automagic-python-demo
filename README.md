@@ -1,1 +1,1 @@
-# instana-automagic-python-demo
+# Instana Automagic Python Demo

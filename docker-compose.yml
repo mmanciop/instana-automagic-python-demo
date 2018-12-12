@@ -1,0 +1,43 @@
+version: '2'
+services:
+
+  hello-python:
+    build:
+      context: python-hello-world
+    networks:
+      pythonmesh:
+        aliases:
+          - hello-docker
+    environment:
+      - AUTOWRAPT_BOOTSTRAP=instana
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+
+  agent:
+    image: instana/agent:test
+    privileged: true
+    pid: "host"
+    ipc: "host"
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /dev:/dev
+     - /sys:/sys
+     - /var/log:/var/log
+     - ./configuration.yaml:/root/configuration.yaml
+    networks:
+      pythonmesh:
+        aliases:
+          - instana-agent
+    environment:
+      - INSTANA_AGENT_ENDPOINT=saas-us-west-2.instana.io # Might need to be adjusted
+      - INSTANA_AGENT_ENDPOINT_PORT=443
+      - INSTANA_AGENT_KEY=<FILL>
+#      - INSTANA_AGENT_ZONE=automagic-python-land
+#      - INSTANA_AGENT_TAGS=automagic-python-demo
+    expose:
+      - "42699"
+
+networks:
+  pythonmesh: {}
